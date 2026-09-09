@@ -1,0 +1,23 @@
+name: Deploy zfoo1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '_worker.js'
+      - '.github/workflows/deploy-zfoo1.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Deploy Pages project zfoo1
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/zfoo1"
+          cp _worker.js "$RUNNER_TEMP/zfoo1/"
+          npx --yes wrangler@latest pages deploy "$RUNNER_TEMP/zfoo1" --project-name=zfoo1 --commit-dirty=true
